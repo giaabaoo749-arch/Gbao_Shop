@@ -10,59 +10,31 @@
 <body>
 
 <header>
-  <div class="wrap nav">
-    <a href="index.html" class="logo">
-      GBAO SHOP
-    </a>
+  <div class="nav">
+    <a class="logo" href="index.html">GBAO SHOP</a>
+    <a href="login.html">Đăng nhập</a>
   </div>
 </header>
 
-<main class="wrap">
+<main class="container">
 
-<div class="form">
+  <div class="form-card">
 
-  <h1>📝 Đăng ký</h1>
+    <h1>📝 Đăng ký</h1>
 
-  <input
-    id="username"
-    placeholder="Tên tài khoản"
-  >
+    <input id="username" placeholder="Tên tài khoản">
 
-  <input
-    id="email"
-    type="email"
-    placeholder="Email"
-  >
+    <input id="email" type="email" placeholder="Email">
 
-  <input
-    id="password"
-    type="password"
-    placeholder="Mật khẩu"
-  >
+    <input id="password" type="password" placeholder="Mật khẩu">
 
-  <input
-    id="password2"
-    type="password"
-    placeholder="Nhập lại mật khẩu"
-  >
+    <button class="btn" onclick="register()">
+      Tạo tài khoản
+    </button>
 
-  <button
-    id="register"
-    class="btn purple">
+    <p id="error"></p>
 
-    Tạo tài khoản
-
-  </button>
-
-  <p id="message"></p>
-
-  <br>
-
-  <a href="login.html">
-    Đã có tài khoản? Đăng nhập
-  </a>
-
-</div>
+  </div>
 
 </main>
 
@@ -70,75 +42,39 @@
 
 <script>
 
-document
-.getElementById("register")
-.onclick = function(){
+function register(){
+
+  const username =
+    document.getElementById("username").value.trim();
+
+  const email =
+    document.getElementById("email").value.trim();
 
   const password =
-  document
-    .getElementById("password")
-    .value;
-
-  const password2 =
-  document
-    .getElementById("password2")
-    .value;
-
-
-  const message =
-  document.getElementById(
-    "message"
-  );
-
-
-  if(password !== password2){
-
-    message.className =
-      "message";
-
-    message.textContent =
-      "Mật khẩu nhập lại không khớp.";
-
-    return;
-
-  }
-
+    document.getElementById("password").value;
 
   const result =
-  GBAO.register(
+    GBAO.register(
+      username,
+      email,
+      password
+    );
 
-    document
-      .getElementById("username")
-      .value,
-
-    document
-      .getElementById("email")
-      .value,
-
-    password
-
-  );
-
+  const error =
+    document.getElementById("error");
 
   if(!result.ok){
 
-    message.className =
-      "message";
-
-    message.textContent =
-      result.message;
-
+    error.textContent = result.message;
     return;
 
   }
 
+  location.href = "index.html";
 
-  location.href =
-    "index.html";
-
-};
+}
 
 </script>
 
 </body>
-</html>
+</html></html>
