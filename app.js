@@ -3,13 +3,17 @@
 "use strict";
 
 
-const KEY = {
+const KEYS = {
 
-  users:"gbao_users",
-  products:"gbao_products",
-  inventory:"gbao_inventory",
-  orders:"gbao_orders",
-  session:"gbao_session"
+  users: "gbao_users",
+
+  products: "gbao_products",
+
+  inventory: "gbao_inventory",
+
+  orders: "gbao_orders",
+
+  session: "gbao_session"
 
 };
 
@@ -19,13 +23,13 @@ function read(key, fallback){
   try{
 
     const value =
-    localStorage.getItem(key);
+      localStorage.getItem(key);
 
     return value
       ? JSON.parse(value)
       : fallback;
 
-  }catch{
+  }catch(e){
 
     return fallback;
 
@@ -34,7 +38,7 @@ function read(key, fallback){
 }
 
 
-function write(key, value){
+function write(key,value){
 
   localStorage.setItem(
     key,
@@ -46,91 +50,41 @@ function write(key, value){
 
 function id(){
 
-  return (
-    Date.now().toString(36) +
+  return Date.now().toString(36)
+    +
     Math.random()
       .toString(36)
-      .slice(2)
-  );
+      .substring(2,8);
 
 }
 
 
-function escape(value){
+function money(value){
 
-  return String(value ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+  return Number(value || 0)
+    .toLocaleString("vi-VN")
+    + "đ";
 
 }
 
 
-function currentUser(){
+/* =========================
+   KHỞI TẠO
+========================= */
 
-  const sid =
-  localStorage.getItem(KEY.session);
-
-  if(!sid)return null;
-
-  const users =
-  read(KEY.users,[]);
-
-  return users.find(
-    u => u.id === sid
-  ) || null;
-
-}
-
-
-function saveUser(user){
-
-  const users =
-  read(KEY.users,[]);
-
-  const index =
-  users.findIndex(
-    u => u.id === user.id
-  );
-
-  if(index >= 0)
-    users[index] = user;
-  else
-    users.push(user);
-
-  write(KEY.users,users);
-
-}
-
-
-function seed(){
+function init(){
 
   let users =
-  read(KEY.users,[]);
-
-  if(!users.length){
-
-    users.push({
-
-      id:id(),
-      username:"admin",
-      email:"admin@gbao.local",
-      password:"admin123",
-      role:"admin",
-      balance:1000000,
-      createdAt:new Date().toISOString()
-
-    });
-
-    write(KEY.users,users);
-
-  }
-
+    read(KEYS.users,[]);
 
   let products =
-  read(KEY.products,[]);
+    read(KEYS.products,[]);
+
+  let inventory =
+    read(KEYS.inventory,[]);
+
+  let orders =
+    read(KEYS.orders,[]);
 
 
   if(!products.length){
@@ -140,9 +94,6 @@ function seed(){
       {
         id:id(),
         name:"IOSVIET",
-        game:"Free Fire",
-        description:"Tài khoản demo IOSVIET",
-        image:"",
         price:50000,
         active:true
       },
@@ -150,9 +101,6 @@ function seed(){
       {
         id:id(),
         name:"SUDO",
-        game:"Free Fire",
-        description:"Tài khoản demo SUDO",
-        image:"",
         price:50000,
         active:true
       },
@@ -160,9 +108,6 @@ function seed(){
       {
         id:id(),
         name:"MIGUL PRO",
-        game:"Free Fire",
-        description:"Tài khoản demo MIGUL PRO",
-        image:"",
         price:50000,
         active:true
       },
@@ -170,9 +115,6 @@ function seed(){
       {
         id:id(),
         name:"MIGUL LITE",
-        game:"Free Fire",
-        description:"Tài khoản demo MIGUL LITE",
-        image:"",
         price:50000,
         active:true
       }
@@ -180,36 +122,40 @@ function seed(){
     ];
 
     write(
-      KEY.products,
+      KEYS.products,
       products
     );
 
   }
 
 
-  if(
-    !localStorage.getItem(
-      KEY.inventory
-    )
-  ){
-
-    write(
-      KEY.inventory,
-      []
+  const adminExists =
+    users.some(
+      u => u.role === "admin"
     );
 
-  }
 
+  if(!adminExists){
 
-  if(
-    !localStorage.getItem(
-      KEY.orders
-    )
-  ){
+    users.push({
+
+      id:id(),
+
+      username:"admin",
+
+      email:"admin@gbao.local",
+
+      password:"admin123",
+
+      role:"admin",
+
+      balance:0
+
+    });
 
     write(
-      KEY.orders,
-      []
+      KEYS.users,
+      users
     );
 
   }
@@ -217,113 +163,102 @@ function seed(){
 }
 
 
-function getProducts(search=""){
-
-  const q =
-  String(search)
-    .trim()
-    .toLowerCase();
-
-  return read(
-    KEY.products,
-    []
-  ).filter(p => {
-
-    if(!p.active)return false;
-
-    if(!q)return true;
-
-    return (
-      p.name.toLowerCase().includes(q) ||
-      p.game.toLowerCase().includes(q) ||
-      p.description.toLowerCase().includes(q)
-    );
-
-  });
-
-}
+init();
 
 
-function getAllProducts(){
+const GBAO = {
+
+
+/* =========================
+   USER
+========================= */
+
+getUsers(){
 
   return read(
-    KEY.products,
+    KEYS.users,
     []
   );
 
-}
+},
 
 
-function getStock(productId){
+getUser(){
 
-  return read(
-    KEY.inventory,
-    []
-  ).filter(
-    x =>
-      x.productId === productId &&
-      !x.sold
-  ).length;
+  const session =
+    localStorage.getItem(
+      KEYS.session
+    );
 
-}
+  if(!session)
+    return null;
+
+  const users =
+    this.getUsers();
+
+  return users.find(
+    u => u.id === session
+  ) || null;
+
+},
 
 
-function register(
+register(
   username,
   email,
   password
 ){
 
   username =
-  username.trim();
+    String(username || "")
+      .trim();
 
   email =
-  email.trim().toLowerCase();
+    String(email || "")
+      .trim()
+      .toLowerCase();
 
-  if(username.length < 3)
-    return {
-      ok:false,
-      message:"Tên tài khoản tối thiểu 3 ký tự."
-    };
-
-
-  if(password.length < 6)
-    return {
-      ok:false,
-      message:"Mật khẩu tối thiểu 6 ký tự."
-    };
-
-
-  const users =
-  read(KEY.users,[]);
+  password =
+    String(password || "");
 
 
   if(
-    users.some(
-      u =>
-        u.email === email
-    )
+    !username ||
+    !email ||
+    !password
   ){
 
     return {
       ok:false,
-      message:"Email đã tồn tại."
+      message:"Vui lòng nhập đầy đủ thông tin."
     };
 
   }
 
 
+  if(password.length < 6){
+
+    return {
+      ok:false,
+      message:"Mật khẩu phải có ít nhất 6 ký tự."
+    };
+
+  }
+
+
+  const users =
+    this.getUsers();
+
+
   if(
     users.some(
-      u =>
-        u.username.toLowerCase()
-        === username.toLowerCase()
+      u => u.email === email
     )
   ){
 
     return {
       ok:false,
-      message:"Tên tài khoản đã tồn tại."
+      message:"Email đã được đăng ký."
     };
 
   }
@@ -332,54 +267,59 @@ function register(
   const user = {
 
     id:id(),
+
     username,
+
     email,
+
     password,
-    role:"customer",
-    balance:0,
-    createdAt:
-      new Date().toISOString()
+
+    role:"user",
+
+    balance:0
 
   };
 
 
   users.push(user);
 
-  write(KEY.users,users);
+  write(
+    KEYS.users,
+    users
+  );
+
 
   localStorage.setItem(
-    KEY.session,
+    KEYS.session,
     user.id
   );
 
 
   return {
-    ok:true,
-    user
+    ok:true
   };
 
-}
+},
 
 
-function login(
-  email,
-  password
-){
+login(email,password){
 
   email =
-  email.trim().toLowerCase();
+    String(email || "")
+      .trim()
+      .toLowerCase();
 
 
   const users =
-  read(KEY.users,[]);
+    this.getUsers();
 
 
   const user =
-  users.find(
-    u =>
-      u.email === email &&
-      u.password === password
-  );
+    users.find(
+      u =>
+        u.email === email &&
+        u.password === password
+    );
 
 
   if(!user){
@@ -393,405 +333,49 @@ function login(
 
 
   localStorage.setItem(
-    KEY.session,
+    KEYS.session,
     user.id
   );
 
 
   return {
-    ok:true,
-    user
+    ok:true
   };
 
-}
+},
 
 
-function logout(){
+logout(){
 
   localStorage.removeItem(
-    KEY.session
+    KEYS.session
   );
 
-}
+  location.href =
+    "index.html";
 
+},
 
-function buy(productId){
 
-  const user =
-  currentUser();
-
-
-  if(!user){
-
-    return {
-      ok:false,
-      login:true,
-      message:"Bạn cần đăng nhập."
-    };
-
-  }
-
-
-  const products =
-  read(KEY.products,[]);
-
-
-  const product =
-  products.find(
-    p =>
-      p.id === productId &&
-      p.active
-  );
-
-
-  if(!product){
-
-    return {
-      ok:false,
-      message:"Sản phẩm không tồn tại."
-    };
-
-  }
-
-
-  const inventory =
-  read(KEY.inventory,[]);
-
-
-  const item =
-  inventory.find(
-    x =>
-      x.productId === productId &&
-      !x.sold
-  );
-
-
-  if(!item){
-
-    return {
-      ok:false,
-      message:"Sản phẩm đã hết hàng."
-    };
-
-  }
-
-
-  if(user.balance < product.price){
-
-    return {
-      ok:false,
-      message:
-        "Số dư không đủ. Số dư hiện tại: " +
-        user.balance.toLocaleString("vi-VN") +
-        "đ"
-    };
-
-  }
-
-
-  user.balance -=
-  product.price;
-
-
-  saveUser(user);
-
-
-  item.sold = true;
-
-  item.soldTo =
-  user.id;
-
-  item.soldAt =
-  new Date().toISOString();
-
-
-  write(
-    KEY.inventory,
-    inventory
-  );
-
-
-  const order = {
-
-    id:id(),
-    userId:user.id,
-    productId:product.id,
-    inventoryId:item.id,
-    amount:product.price,
-    productName:product.name,
-    account:{
-      login:item.login,
-      password:item.password,
-      extra:item.extra || ""
-    },
-    createdAt:
-      new Date().toISOString()
-
-  };
-
-
-  const orders =
-  read(KEY.orders,[]);
-
-  orders.unshift(order);
-
-  write(KEY.orders,orders);
-
-
-  return {
-    ok:true,
-    order,
-    account:order.account
-  };
-
-}
-
-
-function getOrders(){
-
-  const user =
-  currentUser();
-
-  if(!user)return [];
-
-  return read(
-    KEY.orders,
-    []
-  ).filter(
-    o =>
-      o.userId === user.id
-  );
-
-}
-
-
-function admin(){
-
-  const user =
-  currentUser();
-
-  return (
-    user &&
-    user.role === "admin"
-  );
-
-}
-
-
-function addProduct(data){
-
-  if(!admin())
-    throw new Error("Không có quyền.");
-
-  const products =
-  read(KEY.products,[]);
-
-  const product = {
-
-    id:id(),
-    name:data.name,
-    game:data.game,
-    description:data.description,
-    image:data.image,
-    price:Number(data.price),
-    active:true
-
-  };
-
-  products.push(product);
-
-  write(
-    KEY.products,
-    products
-  );
-
-  return product;
-
-}
-
-
-function deleteProduct(productId){
-
-  if(!admin())
-    throw new Error("Không có quyền.");
-
-  const products =
-  read(KEY.products,[]);
-
-  const product =
-  products.find(
-    p => p.id === productId
-  );
-
-  if(product)
-    product.active = false;
-
-  write(
-    KEY.products,
-    products
-  );
-
-}
-
-
-function addInventory(data){
-
-  if(!admin())
-    throw new Error("Không có quyền.");
-
-  const inventory =
-  read(KEY.inventory,[]);
-
-  inventory.push({
-
-    id:id(),
-    productId:data.productId,
-    login:data.login,
-    password:data.password,
-    extra:data.extra || "",
-    sold:false
-
-  });
-
-  write(
-    KEY.inventory,
-    inventory
-  );
-
-}
-
-
-function getInventory(){
-
-  return read(
-    KEY.inventory,
-    []
-  );
-
-}
-
-
-function deleteInventory(itemId){
-
-  if(!admin())
-    throw new Error("Không có quyền.");
-
-  const inventory =
-  read(KEY.inventory,[]);
-
-  const index =
-  inventory.findIndex(
-    x => x.id === itemId
-  );
-
-  if(
-    index >= 0 &&
-    !inventory[index].sold
-  ){
-
-    inventory.splice(index,1);
-
-  }
-
-  write(
-    KEY.inventory,
-    inventory
-  );
-
-}
-
-
-function addBalance(
-  userId,
-  amount
-){
-
-  if(!admin())
-    throw new Error("Không có quyền.");
-
-  amount =
-  Number(amount);
-
-
-  if(
-    !Number.isFinite(amount) ||
-    amount <= 0
-  ){
-
-    throw new Error(
-      "Số tiền không hợp lệ."
-    );
-
-  }
-
-
-  const users =
-  read(KEY.users,[]);
-
-
-  const user =
-  users.find(
-    u => u.id === userId
-  );
-
-
-  if(!user)
-    throw new Error(
-      "Không tìm thấy người dùng."
-    );
-
-
-  user.balance += amount;
-
-  write(KEY.users,users);
-
-}
-
-
-function getUsers(){
-
-  if(!admin())
-    throw new Error("Không có quyền.");
-
-  return read(
-    KEY.users,
-    []
-  );
-
-}
-
-
-function renderNav(){
+renderUserBox(){
 
   const box =
-  document.getElementById(
-    "navUser"
-  );
+    document.getElementById(
+      "userBox"
+    );
 
-  if(!box)return;
+  if(!box)
+    return;
 
 
   const user =
-  currentUser();
+    this.getUser();
 
 
   if(!user){
 
-    box.innerHTML = `
-
-      <a href="login.html">
-        <button class="btn gray">
-          Đăng nhập
-        </button>
-      </a>
-
-      <a href="register.html">
-        <button class="btn purple">
-          Đăng ký
-        </button>
-      </a>
-
-    `;
+    box.innerHTML =
+      `<a href="login.html">Đăng nhập</a>`;
 
     return;
 
@@ -800,34 +384,17 @@ function renderNav(){
 
   box.innerHTML = `
 
-    <span class="user">
-      👤 ${escape(user.username)}
-      <br>
-      💰 ${user.balance.toLocaleString("vi-VN")}đ
+    <span>
+      👤 ${this.escape(
+        user.username
+      )}
+      |
+      ${money(user.balance)}
     </span>
 
-    <a href="orders.html">
-      <button class="btn gray">
-        📦 Đơn hàng
-      </button>
-    </a>
-
-    ${
-      user.role === "admin"
-      ?
-      `
-      <a href="admin.html">
-        <button class="btn purple">
-          👑 Admin
-        </button>
-      </a>
-      `
-      :
-      ""
-    }
-
     <button
-      class="btn red"
+      class="btn"
+      style="width:auto;margin:0 0 0 8px"
       onclick="GBAO.logout()">
 
       Thoát
@@ -836,44 +403,971 @@ function renderNav(){
 
   `;
 
-}
+},
 
 
-window.GBAO = {
+/* =========================
+   PRODUCTS
+========================= */
 
-  getUser:currentUser,
-  register,
-  login,
-  logout(){
-    logout();
+getProducts(){
+
+  return read(
+    KEYS.products,
+    []
+  );
+
+},
+
+
+addProduct(name,price){
+
+  const products =
+    this.getProducts();
+
+
+  products.push({
+
+    id:id(),
+
+    name:name,
+
+    price:Number(price),
+
+    active:true
+
+  });
+
+
+  write(
+    KEYS.products,
+    products
+  );
+
+},
+
+
+/* =========================
+   INVENTORY
+========================= */
+
+getInventory(){
+
+  return read(
+    KEYS.inventory,
+    []
+  );
+
+},
+
+
+addKey(
+  productId,
+  duration,
+  key
+){
+
+  const inventory =
+    this.getInventory();
+
+
+  inventory.push({
+
+    id:id(),
+
+    productId,
+
+    duration:Number(duration),
+
+    key:String(key),
+
+    sold:false,
+
+    createdAt:
+      new Date().toISOString()
+
+  });
+
+
+  write(
+    KEYS.inventory,
+    inventory
+  );
+
+},
+
+
+getStock(
+  productId,
+  duration
+){
+
+  const inventory =
+    this.getInventory();
+
+
+  return inventory.filter(
+    item =>
+      item.productId === productId &&
+      Number(item.duration) === Number(duration) &&
+      !item.sold
+  ).length;
+
+},
+
+
+/* =========================
+   PURCHASE
+========================= */
+
+buy(
+  productId,
+  duration
+){
+
+  const user =
+    this.getUser();
+
+
+  if(!user){
+
+    alert(
+      "Bạn cần đăng nhập trước."
+    );
+
     location.href =
-      "index.html";
-  },
+      "login.html";
 
-  getProducts,
-  getAllProducts,
-  getStock,
-  buy,
-  getOrders,
+    return;
 
-  isAdmin:admin,
+  }
 
-  addProduct,
-  deleteProduct,
 
-  addInventory,
-  getInventory,
-  deleteInventory,
+  const products =
+    this.getProducts();
 
-  addBalance,
-  getUsers,
 
-  renderNav,
-  escape
+  const product =
+    products.find(
+      p =>
+        p.id === productId &&
+        p.active
+    );
+
+
+  if(!product){
+
+    alert(
+      "Sản phẩm không tồn tại."
+    );
+
+    return;
+
+  }
+
+
+  const inventory =
+    this.getInventory();
+
+
+  const item =
+    inventory.find(
+      i =>
+        i.productId === productId &&
+        Number(i.duration) === Number(duration) &&
+        !i.sold
+    );
+
+
+  if(!item){
+
+    alert(
+      "Loại key này hiện đã hết hàng."
+    );
+
+    return;
+
+  }
+
+
+  if(
+    Number(user.balance)
+    <
+    Number(product.price)
+  ){
+
+    alert(
+      "Số dư không đủ."
+    );
+
+    return;
+
+  }
+
+
+  const users =
+    this.getUsers();
+
+
+  const index =
+    users.findIndex(
+      u => u.id === user.id
+    );
+
+
+  users[index].balance -=
+    Number(product.price);
+
+
+  item.sold = true;
+
+  item.soldAt =
+    new Date().toISOString();
+
+  item.buyerId =
+    user.id;
+
+
+  const orders =
+    read(
+      KEYS.orders,
+      []
+    );
+
+
+  const order = {
+
+    id:id(),
+
+    userId:user.id,
+
+    productId,
+
+    productName:
+      product.name,
+
+    duration:Number(duration),
+
+    price:Number(product.price),
+
+    key:item.key,
+
+    createdAt:
+      new Date().toISOString()
+
+  };
+
+
+  orders.push(order);
+
+
+  write(
+    KEYS.users,
+    users
+  );
+
+  write(
+    KEYS.inventory,
+    inventory
+  );
+
+  write(
+    KEYS.orders,
+    orders
+  );
+
+
+  alert(
+    "Mua thành công!\n\n" +
+    "Sản phẩm: " +
+    product.name +
+    "\nThời hạn: " +
+    duration +
+    " ngày\n\n" +
+    "KEY:\n" +
+    item.key
+  );
+
+
+  location.reload();
+
+},
+
+
+/* =========================
+   RENDER PRODUCTS
+========================= */
+
+renderProducts(){
+
+  const container =
+    document.getElementById(
+      "products"
+    );
+
+  if(!container)
+    return;
+
+
+  const products =
+    this.getProducts()
+      .filter(
+        p => p.active
+      );
+
+
+  container.innerHTML = "";
+
+
+  products.forEach(
+    product => {
+
+      const card =
+        document.createElement(
+          "div"
+        );
+
+
+      card.className =
+        "card";
+
+
+      card.innerHTML = `
+
+        <h3>
+          🎮 ${this.escape(
+            product.name
+          )}
+        </h3>
+
+        <div class="price">
+          ${money(product.price)}
+        </div>
+
+        <label>
+          ⏱️ Thời hạn key
+        </label>
+
+        <select
+          id="duration-${product.id}">
+
+          <option value="1">
+            1 ngày
+          </option>
+
+          <option value="7">
+            7 ngày
+          </option>
+
+          <option value="30">
+            30 ngày
+          </option>
+
+        </select>
+
+        <div
+          id="stock-${product.id}"
+          class="stock">
+
+          Chọn thời hạn để xem kho
+
+        </div>
+
+        <button
+          class="btn"
+          onclick="
+            GBAO.buySelected(
+              '${product.id}'
+            )
+          ">
+
+          🛒 Mua ngay
+
+        </button>
+
+      `;
+
+
+      container.appendChild(card);
+
+
+      const select =
+        document.getElementById(
+          "duration-" +
+          product.id
+        );
+
+
+      const update =
+        () => {
+
+          const duration =
+            Number(select.value);
+
+          const stock =
+            this.getStock(
+              product.id,
+              duration
+            );
+
+
+          document
+          .getElementById(
+            "stock-" +
+            product.id
+          )
+          .textContent =
+            "📦 Còn " +
+            stock +
+            " key";
+
+        };
+
+
+      select.addEventListener(
+        "change",
+        update
+      );
+
+
+      update();
+
+    }
+  );
+
+},
+
+
+buySelected(productId){
+
+  const select =
+    document.getElementById(
+      "duration-" +
+      productId
+    );
+
+
+  const duration =
+    Number(select.value);
+
+
+  this.buy(
+    productId,
+    duration
+  );
+
+},
+
+
+/* =========================
+   BALANCE
+========================= */
+
+addBalance(
+  userId,
+  amount
+){
+
+  const users =
+    this.getUsers();
+
+
+  const index =
+    users.findIndex(
+      u => u.id === userId
+    );
+
+
+  if(index === -1){
+
+    throw new Error(
+      "Không tìm thấy người dùng."
+    );
+
+  }
+
+
+  users[index].balance +=
+    Number(amount);
+
+
+  write(
+    KEYS.users,
+    users
+  );
+
+},
+
+
+/* =========================
+   ADMIN
+========================= */
+
+requireAdmin(){
+
+  const user =
+    this.getUser();
+
+
+  if(
+    !user ||
+    user.role !== "admin"
+  ){
+
+    document
+      .getElementById(
+        "adminPanel"
+      )
+      .style.display =
+      "none";
+
+
+    document
+      .getElementById(
+        "adminError"
+      )
+      .innerHTML = `
+
+        <div class="panel error">
+
+          ❌ Bạn không có quyền Admin.
+
+          <br><br>
+
+          <a href="login.html">
+            Đăng nhập
+          </a>
+
+        </div>
+
+      `;
+
+
+    return false;
+
+  }
+
+
+  return true;
+
+},
+
+
+renderAdmin(){
+
+  const users =
+    this.getUsers();
+
+  const products =
+    this.getProducts();
+
+  const inventory =
+    this.getInventory();
+
+  const orders =
+    read(
+      KEYS.orders,
+      []
+    );
+
+
+  document
+    .getElementById(
+      "userCount"
+    )
+    .textContent =
+    users.length;
+
+
+  document
+    .getElementById(
+      "productCount"
+    )
+    .textContent =
+    products.length;
+
+
+  document
+    .getElementById(
+      "stockCount"
+    )
+    .textContent =
+    inventory.filter(
+      i => !i.sold
+    ).length;
+
+
+  document
+    .getElementById(
+      "orderCount"
+    )
+    .textContent =
+    orders.length;
+
+
+  const productSelect =
+    document.getElementById(
+      "inventoryProduct"
+    );
+
+
+  productSelect.innerHTML = "";
+
+
+  products.forEach(
+    p => {
+
+      productSelect.innerHTML += `
+
+        <option value="${p.id}">
+          ${this.escape(p.name)}
+        </option>
+
+      `;
+
+    }
+  );
+
+
+  const userSelect =
+    document.getElementById(
+      "balanceUser"
+    );
+
+
+  userSelect.innerHTML = "";
+
+
+  users.forEach(
+    u => {
+
+      userSelect.innerHTML += `
+
+        <option value="${u.id}">
+          ${this.escape(
+            u.username
+          )}
+          -
+          ${money(u.balance)}
+        </option>
+
+      `;
+
+    }
+  );
+
+
+  this.renderInventoryAdmin(
+    inventory,
+    products
+  );
+
+
+  this.renderUsersAdmin(
+    users
+  );
+
+},
+
+
+renderInventoryAdmin(
+  inventory,
+  products
+){
+
+  const box =
+    document.getElementById(
+      "inventoryTable"
+    );
+
+
+  if(!inventory.length){
+
+    box.innerHTML =
+      "Kho đang trống.";
+
+    return;
+
+  }
+
+
+  box.innerHTML = "";
+
+
+  inventory.forEach(
+    item => {
+
+      const product =
+        products.find(
+          p =>
+            p.id ===
+            item.productId
+        );
+
+
+      const div =
+        document.createElement(
+          "div"
+        );
+
+
+      div.className =
+        "key-info";
+
+
+      div.innerHTML = `
+
+        <b>
+          ${
+            product
+            ?
+            this.escape(
+              product.name
+            )
+            :
+            "Không rõ"
+          }
+        </b>
+
+        <br>
+
+        Thời hạn:
+        ${item.duration} ngày
+
+        <br>
+
+        Key:
+        ${this.escape(item.key)}
+
+        <br>
+
+        Trạng thái:
+        ${
+          item.sold
+          ?
+          "🔴 Đã bán"
+          :
+          "🟢 Còn hàng"
+        }
+
+      `;
+
+
+      box.appendChild(div);
+
+    }
+  );
+
+},
+
+
+renderUsersAdmin(users){
+
+  const box =
+    document.getElementById(
+      "usersTable"
+    );
+
+
+  box.innerHTML = "";
+
+
+  users.forEach(
+    user => {
+
+      const div =
+        document.createElement(
+          "div"
+        );
+
+
+      div.className =
+        "key-info";
+
+
+      div.innerHTML = `
+
+        👤
+        ${this.escape(
+          user.username
+        )}
+
+        <br>
+
+        Email:
+        ${this.escape(
+          user.email
+        )}
+
+        <br>
+
+        Quyền:
+        ${user.role}
+
+        <br>
+
+        Số dư:
+        ${money(user.balance)}
+
+      `;
+
+
+      box.appendChild(div);
+
+    }
+  );
+
+},
+
+
+/* =========================
+   ORDERS
+========================= */
+
+renderOrders(){
+
+  const box =
+    document.getElementById(
+      "orders"
+    );
+
+
+  const user =
+    this.getUser();
+
+
+  if(!user){
+
+    box.innerHTML = `
+
+      <div class="panel">
+
+        Bạn cần
+        <a href="login.html">
+          đăng nhập
+        </a>
+        để xem đơn hàng.
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  const orders =
+    read(
+      KEYS.orders,
+      []
+    ).filter(
+      o =>
+        o.userId === user.id
+    );
+
+
+  if(!orders.length){
+
+    box.innerHTML = `
+
+      <div class="panel">
+
+        Chưa có đơn hàng.
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  box.innerHTML = "";
+
+
+  orders
+    .reverse()
+    .forEach(
+      order => {
+
+        const div =
+          document.createElement(
+            "div"
+          );
+
+
+        div.className =
+          "panel";
+
+
+        div.innerHTML = `
+
+          <h3>
+            ${this.escape(
+              order.productName
+            )}
+          </h3>
+
+          <p>
+            Thời hạn:
+            ${order.duration} ngày
+          </p>
+
+          <p>
+            Giá:
+            ${money(order.price)}
+          </p>
+
+          <p>
+            Mã đơn:
+            ${order.id}
+          </p>
+
+          <div class="key-info">
+
+            🔑 KEY:
+
+            <br>
+
+            <b>
+              ${this.escape(
+                order.key
+              )}
+            </b>
+
+          </div>
+
+        `;
+
+
+        box.appendChild(div);
+
+      }
+    );
+
+},
+
+
+/* =========================
+   SECURITY DISPLAY
+========================= */
+
+escape(value){
+
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
+}
 
 };
 
 
-seed();
+window.GBAO = GBAO;
 
 })();
