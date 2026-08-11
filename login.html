@@ -10,48 +10,34 @@
 <body>
 
 <header>
-  <div class="wrap nav">
-    <a href="index.html" class="logo">
-      GBAO SHOP
-    </a>
+  <div class="nav">
+    <a class="logo" href="index.html">GBAO SHOP</a>
+    <a href="register.html">Đăng ký</a>
   </div>
 </header>
 
-<main class="wrap">
+<main class="container">
 
-<div class="form">
+  <div class="form-card">
 
-  <h1>🔐 Đăng nhập</h1>
+    <h1>🔐 Đăng nhập</h1>
 
-  <input
-    id="email"
-    type="email"
-    placeholder="Email"
-  >
+    <input id="email" type="email" placeholder="Email">
 
-  <input
-    id="password"
-    type="password"
-    placeholder="Mật khẩu"
-  >
+    <input id="password" type="password" placeholder="Mật khẩu">
 
-  <button
-    id="login"
-    class="btn purple">
+    <button class="btn" onclick="login()">
+      Đăng nhập
+    </button>
 
-    Đăng nhập
+    <p id="error"></p>
 
-  </button>
+    <p>
+      Chưa có tài khoản?
+      <a href="register.html">Đăng ký</a>
+    </p>
 
-  <p id="message"></p>
-
-  <br>
-
-  <a href="register.html">
-    Chưa có tài khoản? Đăng ký
-  </a>
-
-</div>
+  </div>
 
 </main>
 
@@ -59,47 +45,30 @@
 
 <script>
 
-document
-.getElementById("login")
-.onclick = function(){
+function login(){
+
+  const email =
+    document.getElementById("email").value.trim();
+
+  const password =
+    document.getElementById("password").value;
 
   const result =
-  GBAO.login(
+    GBAO.login(email,password);
 
-    document
-      .getElementById("email")
-      .value,
-
-    document
-      .getElementById("password")
-      .value
-
-  );
-
-
-  const message =
-  document.getElementById(
-    "message"
-  );
-
+  const error =
+    document.getElementById("error");
 
   if(!result.ok){
 
-    message.className =
-      "message";
-
-    message.textContent =
-      result.message;
-
+    error.textContent = result.message;
     return;
 
   }
 
+  location.href = "index.html";
 
-  location.href =
-    "index.html";
-
-};
+}
 
 </script>
 
