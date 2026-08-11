@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GBAO SHOP</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="index.html" class="logo">GBAO SHOP</a>
+
+    <div id="navUser">
+      <a href="login.html">
+        <button class="btn gray">Đăng nhập</button>
+      </a>
+
+      <a href="register.html">
+        <button class="btn purple">Đăng ký</button>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section class="hero">
+  <h1>🎮 GBAO SHOP</h1>
+  <p>Shop tài khoản game</p>
+</section>
+
+<section class="toolbar">
+  <input
+    id="search"
+    placeholder="🔎 Tìm kiếm sản phẩm..."
+  >
+</section>
+
+<section>
+  <h2>Sản phẩm</h2>
+  <div id="products" class="grid"></div>
+</section>
+
+</main>
+
+<footer>
+  © 2026 GBAO SHOP
+</footer>
+
+<script src="app.js"></script>
+
+<script>
+
+const products =
+document.getElementById("products");
+
+const search =
+document.getElementById("search");
+
+
+function money(n){
+
+  return Number(n)
+    .toLocaleString("vi-VN")
+    + "đ";
+
+}
+
+
+function load(){
+
+  const list =
+  GBAO.getProducts(
+    search.value
+  );
+
+  products.innerHTML = "";
+
+
+  if(!list.length){
+
+    products.innerHTML =
+    `<div class="empty">
+      Không tìm thấy sản phẩm
+    </div>`;
+
+    return;
+
+  }
+
+
+  list.forEach(p => {
+
+    const stock =
+    GBAO.getStock(p.id);
+
+
+    const card =
+    document.createElement("div");
+
+    card.className = "card";
+
+
+    card.innerHTML = `
+
+      ${
+        p.image
+        ?
+        `<img src="${GBAO.escape(p.image)}">`
+        :
+        ""
+      }
+
+      <div class="cardBody">
+
+        <span class="tag">
+          ${GBAO.escape(p.game)}
+        </span>
+
+        <h3>
+          ${GBAO.escape(p.name)}
+        </h3>
+
+        <p>
+          ${GBAO.escape(p.description)}
+        </p>
+
+        <div class="price">
+          ${money(p.price)}
+        </div>
+
+        <p>
+          📦 Kho: <b>${stock}</b>
+        </p>
+
+        <br>
+
+        <button
+          class="btn purple buy"
+          data-id="${p.id}"
+          ${stock <= 0 ? "disabled" : ""}>
+
+          ${stock > 0 ? "🛒 Mua ngay" : "Hết hàng"}
+
+        </button>
+
+      </div>
+    `;
+
+
+    products.appendChild(card);
+
+  });
+
+
+  document
+    .querySelectorAll(".buy")
+    .forEach(btn => {
+
+      btn.onclick = () => {
+
+        const result =
+        GBAO.buy(btn.dataset.id);
+
+
+        if(!result.ok){
+
+          if(result.login){
+
+            location.href =
+            "login.html";
+
+            return;
+
+          }
+
+          alert(result.message);
+
+          return;
+
+        }
+
+
+        alert(
+          "🎉 MUA THÀNH CÔNG!\n\n" +
+          "Tài khoản: " +
+          result.account.login +
+          "\nMật khẩu: " +
+          result.account.password +
+          (
+            result.account.extra
+            ?
+            "\nThông tin: " +
+            result.account.extra
+            :
+            ""
+          )
+        );
+
+
+        location.reload();
+
+      };
+
+    });
+
+}
+
+
+search.oninput = load;
+
+GBAO.renderNav();
+
+load();
+
+</script>
+
+</body>
+</html>

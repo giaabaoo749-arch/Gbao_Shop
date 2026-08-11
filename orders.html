@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Đơn hàng - GBAO SHOP</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+  <div class="wrap nav">
+
+    <a href="index.html" class="logo">
+      GBAO SHOP
+    </a>
+
+    <div id="navUser"></div>
+
+  </div>
+</header>
+
+<main class="wrap">
+
+<h1>📦 Lịch sử mua hàng</h1>
+
+<br>
+
+<div id="orders" class="orders"></div>
+
+</main>
+
+<script src="app.js"></script>
+
+<script>
+
+GBAO.renderNav();
+
+
+const user =
+GBAO.getUser();
+
+
+if(!user){
+
+  location.href =
+    "login.html";
+
+}
+
+
+const box =
+document.getElementById(
+  "orders"
+);
+
+
+const orders =
+GBAO.getOrders();
+
+
+if(!orders.length){
+
+  box.innerHTML =
+  `<div class="empty">
+    Bạn chưa có đơn hàng.
+  </div>`;
+
+}
+
+
+orders.forEach(order => {
+
+  const div =
+  document.createElement("div");
+
+  div.className =
+    "order";
+
+
+  div.innerHTML = `
+
+    <h3>
+      ${GBAO.escape(order.productName)}
+    </h3>
+
+    <p>
+      Mã đơn:
+      ${GBAO.escape(order.id)}
+    </p>
+
+    <p>
+      Giá:
+      ${Number(order.amount)
+        .toLocaleString("vi-VN")}đ
+    </p>
+
+    <p>
+      Thời gian:
+      ${new Date(
+        order.createdAt
+      ).toLocaleString("vi-VN")}
+    </p>
+
+    <details>
+
+      <summary>
+        🔑 Xem thông tin tài khoản
+      </summary>
+
+      <p>
+        Tài khoản:
+        <b>
+          ${GBAO.escape(
+            order.account.login
+          )}
+        </b>
+      </p>
+
+      <p>
+        Mật khẩu:
+        <b>
+          ${GBAO.escape(
+            order.account.password
+          )}
+        </b>
+      </p>
+
+      ${
+        order.account.extra
+        ?
+        `
+        <p>
+          Thông tin:
+          ${GBAO.escape(
+            order.account.extra
+          )}
+        </p>
+        `
+        :
+        ""
+      }
+
+    </details>
+
+  `;
+
+
+  box.appendChild(div);
+
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Đăng nhập - GBAO SHOP</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="index.html" class="logo">
+      GBAO SHOP
+    </a>
+  </div>
+</header>
+
+<main class="wrap">
+
+<div class="form">
+
+  <h1>🔐 Đăng nhập</h1>
+
+  <input
+    id="email"
+    type="email"
+    placeholder="Email"
+  >
+
+  <input
+    id="password"
+    type="password"
+    placeholder="Mật khẩu"
+  >
+
+  <button
+    id="login"
+    class="btn purple">
+
+    Đăng nhập
+
+  </button>
+
+  <p id="message"></p>
+
+  <br>
+
+  <a href="register.html">
+    Chưa có tài khoản? Đăng ký
+  </a>
+
+</div>
+
+</main>
+
+<script src="app.js"></script>
+
+<script>
+
+document
+.getElementById("login")
+.onclick = function(){
+
+  const result =
+  GBAO.login(
+
+    document
+      .getElementById("email")
+      .value,
+
+    document
+      .getElementById("password")
+      .value
+
+  );
+
+
+  const message =
+  document.getElementById(
+    "message"
+  );
+
+
+  if(!result.ok){
+
+    message.className =
+      "message";
+
+    message.textContent =
+      result.message;
+
+    return;
+
+  }
+
+
+  location.href =
+    "index.html";
+
+};
+
+</script>
+
+</body>
+</html>

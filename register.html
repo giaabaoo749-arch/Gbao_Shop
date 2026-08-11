@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Đăng ký - GBAO SHOP</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="index.html" class="logo">
+      GBAO SHOP
+    </a>
+  </div>
+</header>
+
+<main class="wrap">
+
+<div class="form">
+
+  <h1>📝 Đăng ký</h1>
+
+  <input
+    id="username"
+    placeholder="Tên tài khoản"
+  >
+
+  <input
+    id="email"
+    type="email"
+    placeholder="Email"
+  >
+
+  <input
+    id="password"
+    type="password"
+    placeholder="Mật khẩu"
+  >
+
+  <input
+    id="password2"
+    type="password"
+    placeholder="Nhập lại mật khẩu"
+  >
+
+  <button
+    id="register"
+    class="btn purple">
+
+    Tạo tài khoản
+
+  </button>
+
+  <p id="message"></p>
+
+  <br>
+
+  <a href="login.html">
+    Đã có tài khoản? Đăng nhập
+  </a>
+
+</div>
+
+</main>
+
+<script src="app.js"></script>
+
+<script>
+
+document
+.getElementById("register")
+.onclick = function(){
+
+  const password =
+  document
+    .getElementById("password")
+    .value;
+
+  const password2 =
+  document
+    .getElementById("password2")
+    .value;
+
+
+  const message =
+  document.getElementById(
+    "message"
+  );
+
+
+  if(password !== password2){
+
+    message.className =
+      "message";
+
+    message.textContent =
+      "Mật khẩu nhập lại không khớp.";
+
+    return;
+
+  }
+
+
+  const result =
+  GBAO.register(
+
+    document
+      .getElementById("username")
+      .value,
+
+    document
+      .getElementById("email")
+      .value,
+
+    password
+
+  );
+
+
+  if(!result.ok){
+
+    message.className =
+      "message";
+
+    message.textContent =
+      result.message;
+
+    return;
+
+  }
+
+
+  location.href =
+    "index.html";
+
+};
+
+</script>
+
+</body>
+</html>
