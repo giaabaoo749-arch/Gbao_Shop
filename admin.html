@@ -21,305 +21,449 @@
   </div>
 </header>
 
+
 <main class="wrap">
 
-<h1>👑 Quản lý GBAO SHOP</h1>
+  <h1>👑 Quản lý GBAO SHOP</h1>
 
-<div id="denied"></div>
+  <br>
 
-<div id="adminPanel">
+  <div id="message"></div>
 
-<section class="stats">
+  <div id="adminPanel" style="display:none">
 
-  <div class="stat">
-    Người dùng
-    <b id="usersCount">0</b>
+    <section class="stats">
+
+      <div class="stat">
+        Người dùng
+        <b id="usersCount">0</b>
+      </div>
+
+      <div class="stat">
+        Sản phẩm
+        <b id="productsCount">0</b>
+      </div>
+
+      <div class="stat">
+        Kho
+        <b id="stockCount">0</b>
+      </div>
+
+      <div class="stat">
+        Đơn hàng
+        <b id="ordersCount">0</b>
+      </div>
+
+    </section>
+
+
+    <div class="adminGrid">
+
+      <!-- THÊM SẢN PHẨM -->
+
+      <section class="panel">
+
+        <h2>➕ Thêm sản phẩm</h2>
+
+        <br>
+
+        <input
+          id="pName"
+          placeholder="Tên sản phẩm"
+        >
+
+        <br><br>
+
+        <input
+          id="pGame"
+          placeholder="Tên game"
+        >
+
+        <br><br>
+
+        <textarea
+          id="pDescription"
+          placeholder="Mô tả"
+        ></textarea>
+
+        <br>
+
+        <input
+          id="pImage"
+          placeholder="URL ảnh (không bắt buộc)"
+        >
+
+        <br><br>
+
+        <input
+          id="pPrice"
+          type="number"
+          placeholder="Giá"
+        >
+
+        <br><br>
+
+        <button
+          id="addProduct"
+          class="btn purple">
+
+          Thêm sản phẩm
+
+        </button>
+
+      </section>
+
+
+      <!-- THÊM ACC -->
+
+      <section class="panel">
+
+        <h2>🔑 Thêm acc vào kho</h2>
+
+        <br>
+
+        <select id="inventoryProduct">
+        </select>
+
+        <br><br>
+
+        <input
+          id="iLogin"
+          placeholder="Tài khoản"
+        >
+
+        <br><br>
+
+        <input
+          id="iPassword"
+          placeholder="Mật khẩu"
+        >
+
+        <br><br>
+
+        <input
+          id="iExtra"
+          placeholder="Thông tin thêm"
+        >
+
+        <br><br>
+
+        <button
+          id="addInventory"
+          class="btn green">
+
+          Thêm vào kho
+
+        </button>
+
+      </section>
+
+
+      <!-- CỘNG TIỀN -->
+
+      <section class="panel">
+
+        <h2>💰 Cộng số dư</h2>
+
+        <br>
+
+        <select id="balanceUser">
+        </select>
+
+        <br><br>
+
+        <input
+          id="balanceAmount"
+          type="number"
+          placeholder="Số tiền"
+        >
+
+        <br><br>
+
+        <button
+          id="addBalance"
+          class="btn orange">
+
+          Cộng tiền
+
+        </button>
+
+      </section>
+
+    </div>
+
+
+    <br>
+
+
+    <!-- SẢN PHẨM -->
+
+    <section class="panel">
+
+      <h2>📦 Sản phẩm</h2>
+
+      <br>
+
+      <div class="tableWrap">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Tên</th>
+              <th>Game</th>
+              <th>Giá</th>
+              <th>Kho</th>
+              <th>Thao tác</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="productTable">
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+
+    <br>
+
+
+    <!-- KHO -->
+
+    <section class="panel">
+
+      <h2>🔐 Kho tài khoản</h2>
+
+      <br>
+
+      <div class="tableWrap">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Sản phẩm</th>
+              <th>Tài khoản</th>
+              <th>Trạng thái</th>
+              <th>Thao tác</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="inventoryTable">
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+
+    <br>
+
+
+    <!-- USER -->
+
+    <section class="panel">
+
+      <h2>👥 Người dùng</h2>
+
+      <br>
+
+      <div class="tableWrap">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Tên</th>
+              <th>Email</th>
+              <th>Quyền</th>
+              <th>Số dư</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="userTable">
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
   </div>
-
-  <div class="stat">
-    Sản phẩm
-    <b id="productsCount">0</b>
-  </div>
-
-  <div class="stat">
-    Kho
-    <b id="stockCount">0</b>
-  </div>
-
-  <div class="stat">
-    Đơn hàng
-    <b id="ordersCount">0</b>
-  </div>
-
-</section>
-
-
-<div class="adminGrid">
-
-<section class="panel">
-
-<h2>➕ Thêm sản phẩm</h2>
-
-<br>
-
-<input id="pName"
-placeholder="Tên sản phẩm">
-
-<input id="pGame"
-placeholder="Game">
-
-<textarea id="pDescription"
-placeholder="Mô tả"></textarea>
-
-<input id="pImage"
-placeholder="URL ảnh (không bắt buộc)">
-
-<input id="pPrice"
-type="number"
-placeholder="Giá">
-
-<br>
-
-<button
-id="addProduct"
-class="btn purple">
-
-Thêm sản phẩm
-
-</button>
-
-</section>
-
-
-<section class="panel">
-
-<h2>🔑 Thêm acc vào kho</h2>
-
-<br>
-
-<select id="inventoryProduct"></select>
-
-<input id="iLogin"
-placeholder="Tài khoản">
-
-<input id="iPassword"
-placeholder="Mật khẩu">
-
-<input id="iExtra"
-placeholder="Thông tin thêm">
-
-<button
-id="addInventory"
-class="btn green">
-
-Thêm vào kho
-
-</button>
-
-</section>
-
-
-<section class="panel">
-
-<h2>💰 Cộng số dư</h2>
-
-<br>
-
-<select id="balanceUser"></select>
-
-<input
-id="balanceAmount"
-type="number"
-placeholder="Số tiền">
-
-<button
-id="addBalance"
-class="btn orange">
-
-Cộng tiền
-
-</button>
-
-</section>
-
-</div>
-
-
-<br>
-
-<section class="panel">
-
-<h2>📦 Sản phẩm</h2>
-
-<br>
-
-<div class="tableWrap">
-
-<table>
-
-<thead>
-
-<tr>
-<th>Tên</th>
-<th>Game</th>
-<th>Giá</th>
-<th>Kho</th>
-<th></th>
-</tr>
-
-</thead>
-
-<tbody id="productTable">
-</tbody>
-
-</table>
-
-</div>
-
-</section>
-
-
-<br>
-
-<section class="panel">
-
-<h2>🔐 Kho tài khoản</h2>
-
-<br>
-
-<div class="tableWrap">
-
-<table>
-
-<thead>
-
-<tr>
-<th>Sản phẩm</th>
-<th>Tài khoản</th>
-<th>Trạng thái</th>
-<th></th>
-</tr>
-
-</thead>
-
-<tbody id="inventoryTable">
-</tbody>
-
-</table>
-
-</div>
-
-</section>
-
-
-<br>
-
-<section class="panel">
-
-<h2>👥 Người dùng</h2>
-
-<br>
-
-<div class="tableWrap">
-
-<table>
-
-<thead>
-
-<tr>
-<th>Username</th>
-<th>Email</th>
-<th>Role</th>
-<th>Số dư</th>
-</tr>
-
-</thead>
-
-<tbody id="userTable">
-</tbody>
-
-</table>
-
-</div>
-
-</section>
-
-</div>
 
 </main>
+
 
 <script src="app.js"></script>
 
 <script>
 
-GBAO.renderNav();
-
-
-const panel =
-document.getElementById(
-  "adminPanel"
+document.addEventListener(
+  "DOMContentLoaded",
+  initAdmin
 );
 
 
-if(!GBAO.isAdmin()){
+function money(number){
 
-  panel.style.display =
-    "none";
+  return Number(number || 0)
+    .toLocaleString("vi-VN") + "đ";
+
+}
+
+
+function showMessage(
+  text,
+  type = "error"
+){
+
+  const box =
+    document.getElementById(
+      "message"
+    );
+
+  box.innerHTML = `
+
+    <div class="panel">
+
+      ${type === "error" ? "❌" : "✅"}
+
+      ${GBAO.escape(text)}
+
+    </div>
+
+  `;
+
+}
+
+
+function initAdmin(){
+
+  /*
+    Kiểm tra GBAO đã được tải
+  */
+
+  if(
+    typeof GBAO === "undefined"
+  ){
+
+    showMessage(
+      "Không tải được app.js. Hãy kiểm tra app.js có nằm cùng thư mục với admin.html hay không."
+    );
+
+    return;
+
+  }
+
+
+  GBAO.renderNav();
+
+
+  const user =
+    GBAO.getUser();
+
+
+  /*
+    Chưa đăng nhập
+  */
+
+  if(!user){
+
+    showMessage(
+      "Bạn chưa đăng nhập. Hãy đăng nhập tài khoản Admin trước."
+    );
+
+    setTimeout(
+      () => {
+        location.href =
+          "login.html";
+      },
+      1500
+    );
+
+    return;
+
+  }
+
+
+  /*
+    Không phải Admin
+  */
+
+  if(user.role !== "admin"){
+
+    showMessage(
+      "Tài khoản hiện tại không có quyền Admin."
+    );
+
+    return;
+
+  }
+
+
+  /*
+    Cho phép hiển thị Admin
+  */
 
   document
-    .getElementById("denied")
-    .innerHTML = `
-      <div class="empty">
-        ❌ Bạn không có quyền Admin.
-      </div>
-    `;
+    .getElementById(
+      "adminPanel"
+    )
+    .style.display = "block";
 
-}else{
 
   render();
 
 }
 
 
-function money(n){
-
-  return Number(n)
-    .toLocaleString("vi-VN")
-    + "đ";
-
-}
-
+/* =========================
+   RENDER ADMIN
+========================= */
 
 function render(){
 
-  const products =
-  GBAO.getAllProducts();
-
-
   const users =
-  GBAO.getUsers();
+    GBAO.getUsers();
 
+  const products =
+    GBAO.getAllProducts();
 
   const inventory =
-  GBAO.getInventory();
-
+    GBAO.getInventory();
 
   const orders =
-  JSON.parse(
-    localStorage.getItem(
-      "gbao_orders"
-    ) || "[]"
-  );
+    JSON.parse(
+      localStorage.getItem(
+        "gbao_orders"
+      ) || "[]"
+    );
 
 
   document
-    .getElementById("usersCount")
+    .getElementById(
+      "usersCount"
+    )
     .textContent =
     users.length;
 
 
   document
-    .getElementById("productsCount")
+    .getElementById(
+      "productsCount"
+    )
     .textContent =
     products.filter(
       p => p.active
@@ -327,372 +471,723 @@ function render(){
 
 
   document
-    .getElementById("stockCount")
+    .getElementById(
+      "stockCount"
+    )
     .textContent =
     inventory.filter(
-      x => !x.sold
+      i => !i.sold
     ).length;
 
 
   document
-    .getElementById("ordersCount")
+    .getElementById(
+      "ordersCount"
+    )
     .textContent =
     orders.length;
 
 
-  const productSelect =
-  document.getElementById(
-    "inventoryProduct"
-  );
-
-
-  productSelect.innerHTML =
-  products
-    .filter(p => p.active)
-    .map(
-      p =>
-      `<option value="${p.id}">
-        ${GBAO.escape(p.name)}
-      </option>`
-    )
-    .join("");
-
-
-  const userSelect =
-  document.getElementById(
-    "balanceUser"
-  );
-
-
-  userSelect.innerHTML =
-  users
-    .map(
-      u =>
-      `<option value="${u.id}">
-        ${GBAO.escape(u.username)}
-        -
-        ${money(u.balance)}
-      </option>`
-    )
-    .join("");
-
-
-  document
-    .getElementById("productTable")
-    .innerHTML =
+  renderProductSelect(
     products
-      .filter(p => p.active)
-      .map(
-        p => `
+  );
 
-        <tr>
-
-          <td>
-            ${GBAO.escape(p.name)}
-          </td>
-
-          <td>
-            ${GBAO.escape(p.game)}
-          </td>
-
-          <td>
-            ${money(p.price)}
-          </td>
-
-          <td>
-            ${GBAO.getStock(p.id)}
-          </td>
-
-          <td>
-
-            <button
-              class="btn red"
-              onclick="removeProduct('${p.id}')">
-
-              Xóa
-
-            </button>
-
-          </td>
-
-        </tr>
-
-        `
-      )
-      .join("");
-
-
-  document
-    .getElementById("inventoryTable")
-    .innerHTML =
-    inventory
-      .map(item => {
-
-        const p =
-        products.find(
-          x =>
-            x.id === item.productId
-        );
-
-
-        return `
-
-        <tr>
-
-          <td>
-            ${
-              p
-              ?
-              GBAO.escape(p.name)
-              :
-              "Không tồn tại"
-            }
-          </td>
-
-          <td>
-            ${GBAO.escape(item.login)}
-          </td>
-
-          <td>
-            ${
-              item.sold
-              ? "Đã bán"
-              : "Còn hàng"
-            }
-          </td>
-
-          <td>
-
-            ${
-              !item.sold
-              ?
-              `
-              <button
-                class="btn red"
-                onclick="removeInventory('${item.id}')">
-
-                Xóa
-
-              </button>
-              `
-              :
-              ""
-            }
-
-          </td>
-
-        </tr>
-
-        `;
-
-      })
-      .join("");
-
-
-  document
-    .getElementById("userTable")
-    .innerHTML =
+  renderUserSelect(
     users
-      .map(
-        u => `
+  );
 
-        <tr>
+  renderProducts(
+    products
+  );
 
-          <td>
-            ${GBAO.escape(u.username)}
-          </td>
+  renderInventory(
+    inventory,
+    products
+  );
 
-          <td>
-            ${GBAO.escape(u.email)}
-          </td>
-
-          <td>
-            ${GBAO.escape(u.role)}
-          </td>
-
-          <td>
-            ${money(u.balance)}
-          </td>
-
-        </tr>
-
-        `
-      )
-      .join("");
+  renderUsers(
+    users
+  );
 
 }
 
 
+/* =========================
+   SELECT SẢN PHẨM
+========================= */
+
+function renderProductSelect(
+  products
+){
+
+  const select =
+    document.getElementById(
+      "inventoryProduct"
+    );
+
+
+  select.innerHTML = "";
+
+
+  products
+    .filter(
+      p => p.active
+    )
+    .forEach(p => {
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+      option.value =
+        p.id;
+
+      option.textContent =
+        p.name;
+
+      select.appendChild(
+        option
+      );
+
+    });
+
+}
+
+
+/* =========================
+   SELECT USER
+========================= */
+
+function renderUserSelect(
+  users
+){
+
+  const select =
+    document.getElementById(
+      "balanceUser"
+    );
+
+
+  select.innerHTML = "";
+
+
+  users.forEach(user => {
+
+    const option =
+      document.createElement(
+        "option"
+      );
+
+    option.value =
+      user.id;
+
+    option.textContent =
+      user.username +
+      " - " +
+      money(user.balance);
+
+    select.appendChild(
+      option
+    );
+
+  });
+
+}
+
+
+/* =========================
+   PRODUCTS
+========================= */
+
+function renderProducts(
+  products
+){
+
+  const table =
+    document.getElementById(
+      "productTable"
+    );
+
+
+  table.innerHTML = "";
+
+
+  products
+    .filter(
+      p => p.active
+    )
+    .forEach(product => {
+
+      const tr =
+        document.createElement(
+          "tr"
+        );
+
+
+      tr.innerHTML = `
+
+        <td>
+          ${GBAO.escape(
+            product.name
+          )}
+        </td>
+
+        <td>
+          ${GBAO.escape(
+            product.game
+          )}
+        </td>
+
+        <td>
+          ${money(
+            product.price
+          )}
+        </td>
+
+        <td>
+          ${GBAO.getStock(
+            product.id
+          )}
+        </td>
+
+        <td>
+
+          <button
+            class="btn red"
+            onclick="
+              removeProduct(
+                '${product.id}'
+              )
+            ">
+
+            Xóa
+
+          </button>
+
+        </td>
+
+      `;
+
+
+      table.appendChild(tr);
+
+    });
+
+}
+
+
+/* =========================
+   INVENTORY
+========================= */
+
+function renderInventory(
+  inventory,
+  products
+){
+
+  const table =
+    document.getElementById(
+      "inventoryTable"
+    );
+
+
+  table.innerHTML = "";
+
+
+  inventory.forEach(item => {
+
+    const product =
+      products.find(
+        p =>
+          p.id ===
+          item.productId
+      );
+
+
+    const tr =
+      document.createElement(
+        "tr"
+      );
+
+
+    tr.innerHTML = `
+
+      <td>
+        ${
+          product
+          ?
+          GBAO.escape(
+            product.name
+          )
+          :
+          "Không tồn tại"
+        }
+      </td>
+
+      <td>
+        ${GBAO.escape(
+          item.login
+        )}
+      </td>
+
+      <td>
+        ${
+          item.sold
+          ?
+          "🔴 Đã bán"
+          :
+          "🟢 Còn hàng"
+        }
+      </td>
+
+      <td>
+
+        ${
+          !item.sold
+          ?
+          `
+          <button
+            class="btn red"
+            onclick="
+              removeInventory(
+                '${item.id}'
+              )
+            ">
+
+            Xóa
+
+          </button>
+          `
+          :
+          ""
+        }
+
+      </td>
+
+    `;
+
+
+    table.appendChild(tr);
+
+  });
+
+}
+
+
+/* =========================
+   USERS
+========================= */
+
+function renderUsers(
+  users
+){
+
+  const table =
+    document.getElementById(
+      "userTable"
+    );
+
+
+  table.innerHTML = "";
+
+
+  users.forEach(user => {
+
+    const tr =
+      document.createElement(
+        "tr"
+      );
+
+
+    tr.innerHTML = `
+
+      <td>
+        ${GBAO.escape(
+          user.username
+        )}
+      </td>
+
+      <td>
+        ${GBAO.escape(
+          user.email
+        )}
+      </td>
+
+      <td>
+        ${GBAO.escape(
+          user.role
+        )}
+      </td>
+
+      <td>
+        ${money(
+          user.balance
+        )}
+      </td>
+
+    `;
+
+
+    table.appendChild(tr);
+
+  });
+
+}
+
+
+/* =========================
+   THÊM SẢN PHẨM
+========================= */
+
 document
-.getElementById("addProduct")
+.getElementById(
+  "addProduct"
+)
 .onclick = function(){
 
   try{
+
+    const name =
+      document
+      .getElementById(
+        "pName"
+      )
+      .value.trim();
+
+
+    const game =
+      document
+      .getElementById(
+        "pGame"
+      )
+      .value.trim();
+
+
+    const description =
+      document
+      .getElementById(
+        "pDescription"
+      )
+      .value.trim();
+
+
+    const image =
+      document
+      .getElementById(
+        "pImage"
+      )
+      .value.trim();
+
+
+    const price =
+      Number(
+        document
+        .getElementById(
+          "pPrice"
+        )
+        .value
+      );
+
+
+    if(!name){
+
+      alert(
+        "Vui lòng nhập tên sản phẩm."
+      );
+
+      return;
+
+    }
+
+
+    if(!game){
+
+      alert(
+        "Vui lòng nhập tên game."
+      );
+
+      return;
+
+    }
+
+
+    if(
+      !Number.isFinite(price) ||
+      price <= 0
+    ){
+
+      alert(
+        "Giá sản phẩm không hợp lệ."
+      );
+
+      return;
+
+    }
+
 
     GBAO.addProduct({
 
-      name:
-        document
-          .getElementById("pName")
-          .value,
-
-      game:
-        document
-          .getElementById("pGame")
-          .value,
-
-      description:
-        document
-          .getElementById("pDescription")
-          .value,
-
-      image:
-        document
-          .getElementById("pImage")
-          .value,
-
-      price:
-        document
-          .getElementById("pPrice")
-          .value
+      name,
+      game,
+      description,
+      image,
+      price
 
     });
 
 
     alert(
-      "Đã thêm sản phẩm."
+      "✅ Đã thêm sản phẩm."
     );
 
 
     location.reload();
 
-  }catch(e){
+  }catch(error){
 
-    alert(e.message);
+    alert(
+      error.message
+    );
 
   }
 
 };
 
 
+/* =========================
+   THÊM ACC
+========================= */
+
 document
-.getElementById("addInventory")
+.getElementById(
+  "addInventory"
+)
 .onclick = function(){
 
   try{
+
+    const productId =
+      document
+      .getElementById(
+        "inventoryProduct"
+      )
+      .value;
+
+
+    const login =
+      document
+      .getElementById(
+        "iLogin"
+      )
+      .value.trim();
+
+
+    const password =
+      document
+      .getElementById(
+        "iPassword"
+      )
+      .value;
+
+
+    const extra =
+      document
+      .getElementById(
+        "iExtra"
+      )
+      .value.trim();
+
+
+    if(!productId){
+
+      alert(
+        "Chưa có sản phẩm."
+      );
+
+      return;
+
+    }
+
+
+    if(!login || !password){
+
+      alert(
+        "Vui lòng nhập tài khoản và mật khẩu."
+      );
+
+      return;
+
+    }
+
 
     GBAO.addInventory({
 
-      productId:
-        document
-          .getElementById(
-            "inventoryProduct"
-          )
-          .value,
-
-      login:
-        document
-          .getElementById("iLogin")
-          .value,
-
-      password:
-        document
-          .getElementById("iPassword")
-          .value,
-
-      extra:
-        document
-          .getElementById("iExtra")
-          .value
+      productId,
+      login,
+      password,
+      extra
 
     });
 
 
     alert(
-      "Đã thêm acc vào kho."
+      "✅ Đã thêm acc vào kho."
     );
 
 
     location.reload();
 
-  }catch(e){
+  }catch(error){
 
-    alert(e.message);
+    alert(
+      error.message
+    );
 
   }
 
 };
 
 
+/* =========================
+   CỘNG TIỀN
+========================= */
+
 document
-.getElementById("addBalance")
+.getElementById(
+  "addBalance"
+)
 .onclick = function(){
 
   try{
 
-    GBAO.addBalance(
-
+    const userId =
       document
-        .getElementById(
-          "balanceUser"
-        )
-        .value,
+      .getElementById(
+        "balanceUser"
+      )
+      .value;
 
-      document
+
+    const amount =
+      Number(
+        document
         .getElementById(
           "balanceAmount"
         )
         .value
+      );
 
+
+    if(
+      !Number.isFinite(amount) ||
+      amount <= 0
+    ){
+
+      alert(
+        "Số tiền không hợp lệ."
+      );
+
+      return;
+
+    }
+
+
+    GBAO.addBalance(
+      userId,
+      amount
     );
 
 
     alert(
-      "Đã cộng số dư."
+      "✅ Đã cộng " +
+      money(amount)
     );
 
 
     location.reload();
 
-  }catch(e){
+  }catch(error){
 
-    alert(e.message);
+    alert(
+      error.message
+    );
 
   }
 
 };
 
+
+/* =========================
+   XÓA SẢN PHẨM
+========================= */
 
 window.removeProduct =
-function(id){
+function(productId){
 
   if(
-    confirm(
-      "Xóa sản phẩm này?"
+    !confirm(
+      "Bạn có chắc muốn xóa sản phẩm?"
     )
   ){
 
-    GBAO.deleteProduct(id);
+    return;
+
+  }
+
+
+  try{
+
+    GBAO.deleteProduct(
+      productId
+    );
+
 
     location.reload();
+
+  }catch(error){
+
+    alert(
+      error.message
+    );
 
   }
 
 };
 
 
+/* =========================
+   XÓA ACC
+========================= */
+
 window.removeInventory =
-function(id){
+function(itemId){
 
   if(
-    confirm(
-      "Xóa acc khỏi kho?"
+    !confirm(
+      "Bạn có chắc muốn xóa acc này?"
     )
   ){
 
-    GBAO.deleteInventory(id);
+    return;
+
+  }
+
+
+  try{
+
+    GBAO.deleteInventory(
+      itemId
+    );
+
 
     location.reload();
+
+  }catch(error){
+
+    alert(
+      error.message
+    );
 
   }
 
@@ -701,4 +1196,4 @@ function(id){
 </script>
 
 </body>
-</html>
+  </html>
